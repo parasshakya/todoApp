@@ -126,8 +126,9 @@ class _MyHomePageState extends State<MyHomePage> {
                        )
                      ]
                    ),
-                   child:const  TextField(
-                     decoration: InputDecoration(
+                   child:  TextField(
+                     controller: _todoController,
+                     decoration: const InputDecoration(
                        hintText: 'Add a new todo item',
                        border: InputBorder.none,
 
@@ -174,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
                        _runFilter(value);
                     },
 
-                    decoration:  InputDecoration(
+                    decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Search...',
                       icon: Icon(Icons.search),
