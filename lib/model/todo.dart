@@ -5,8 +5,6 @@ class Todo{
 
   Todo({required this.id, required this.isDone, required this.todoText});
 
-  static List<Todo> todoList = [
 
-  ];
 
 }
