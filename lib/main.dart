@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todoapp/constants/colors.dart';
 import 'package:todoapp/model/todo.dart';
+import 'package:todoapp/provider/todo_provider.dart';
+import 'package:todoapp/screens/completed_task_screen.dart';
 import 'package:todoapp/widget/todo_item.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (_) => TodoListProvider(),
+      child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -14,6 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Todo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -40,123 +46,142 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Todo> _foundTodo = [];
-  final todoList = Todo.todoList;
+
 
   final _todoController = TextEditingController();
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    _foundTodo = todoList;
-    super.initState();
-  }
+  Drawer getDrawer() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          const DrawerHeader(
 
-  void _runFilter(String enteredKeyword){
-    List<Todo> results = [];
-    if(enteredKeyword.isEmpty){
-      results = todoList;
-
-    }else{
-      results = todoList.where((item) => item.todoText!.toLowerCase().contains(enteredKeyword.toLowerCase())).toList();
-    }
-    setState(() {
-      _foundTodo = results;
-    });
+            decoration: BoxDecoration(
+              color: Colors.blue,
+            ),
+            child: Center(child: Text(
+              'Progress Tracking', style: TextStyle(fontSize: 30),)),
+          ),
+          ListTile(
+            title: const Text('Completed Tasks'),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => const CompletedTaskScreen()));
+            },
+          ),
+          ListTile(
+            title: const Text('Running Tasks'),
+            onTap: () {
+              // Handle item 2 tap
+            },
+          ), ListTile(
+            title: const Text('Postponed Tasks'),
+            onTap: () {
+              // Handle item 2 tap
+            },
+          ),
+          // Add more ListTiles for additional items
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    print('build');
+    final todoListProvider = Provider.of<TodoListProvider>(context);
+    todoListProvider.setFoundTodoList(todoListProvider.todos);
     return SafeArea(
       child: Scaffold(
+        drawer: getDrawer(),
         backgroundColor: tdBgColor,
 
-       appBar: AppBar(
-         elevation: 0,
-         backgroundColor: tdBgColor,
-         title: Row(children: const [
-           Icon(Icons.menu, color: Colors.black,),
-         ],),
-       ),
+        appBar: AppBar(
+
+          elevation: 0,
+          backgroundColor: tdBgColor,
+          foregroundColor: Colors.black,
+
+
+        ),
         body: Stack(
-         children:[
-           Center(
-             child: Padding(
-               padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20),
-               child: Column(
-                 mainAxisAlignment: MainAxisAlignment.start,
-                 children: [
-                   searchBox(),
-                   SizedBox(height: 30,),
-                   Expanded(
-                     child: ListView(
-                       children: [
-                         Text('All Todo\'s', style: TextStyle(fontSize: 32),),
-                         SizedBox(height: 20,),
-                         for(Todo todo in _foundTodo.reversed)
-                           TodoItem(
-                             todo: todo,
-                             onDeleteItem: _handleDeleteItem,
-                             onTodoChanged: _handleToDoChange,
-                         ),
+            children: [
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15.0, horizontal: 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      searchBox(),
+                      const SizedBox(height: 30,),
+                      Expanded(child:
+                       ListView.builder(
+                         shrinkWrap: true,
+                         itemBuilder: (context, index) {
+                           return TodoItem(todo: todoListProvider.todoFound[index], onTodoDelete: todoListProvider.deleteTodoItem, onTodoClick: _handleTodoClick);
 
-                       ],
-                     ),
-                   )
-                 ],
-               ),
-             ),
-           ),
-           Align(alignment: Alignment.bottomCenter,
-           child: Row(
-             children: [
-               Expanded(
-                 child: Container(
-                   margin: EdgeInsets.only(bottom: 20,right: 20, left: 20),
-                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                   decoration: BoxDecoration(
-                     color: Colors.white,
-                     borderRadius:  BorderRadius.circular(8),
-                     boxShadow:  const [
-                        BoxShadow(
-                         color: Colors.grey,
-                         offset: Offset(0,0),
-                         blurRadius: 10.0,
-                         spreadRadius: 0.0,
-                       )
-                     ]
-                   ),
-                   child:  TextField(
-                     controller: _todoController,
-                     decoration: const InputDecoration(
-                       hintText: 'Add a new todo item',
-                       border: InputBorder.none,
+                         }, itemCount: todoListProvider.todoFound.length,)
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Align(alignment: Alignment.bottomCenter,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            bottom: 20, right: 20, left: 20),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 5),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.grey,
+                                offset: Offset(0, 0),
+                                blurRadius: 10.0,
+                                spreadRadius: 0.0,
+                              )
+                            ]
+                        ),
+                        child: TextField(
+                          controller: _todoController,
+                          decoration: const InputDecoration(
+                            hintText: 'Add a new todo item',
+                            border: InputBorder.none,
 
-                     ),
-                   ),
-                 ),
-               ),
-               Container(
-                 margin: const EdgeInsets.only(bottom: 20, right: 20),
-                 child: ElevatedButton(
-                   onPressed: (){
-                     _addTodoItem(_todoController.text.trim());
-                   },
-                   child:  Text('+', style: TextStyle(fontSize: 40),),
-                   style: ElevatedButton.styleFrom(
-                     backgroundColor: tdBlue,
-                     minimumSize: Size(60,60),
-                     elevation: 10
-                   ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 20, right: 20),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          todoListProvider.addTodoItem(
+                              _todoController.text.trim());
+                          _todoController.clear();
+                        },
+                        child: Text('+', style: TextStyle(fontSize: 40),),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: tdBlue,
+                            minimumSize: Size(60, 60),
+                            elevation: 10
+                        ),
 
-                 ),
-               )
+                      ),
+                    )
 
-             ],
-           ),
-           )
+                  ],
+                ),
+              )
 
-         ]
+            ]
         ),
       ),
     );
@@ -164,47 +189,34 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Container searchBox() {
     return Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.white
-                ),
-                child:   Padding(
-                  padding:  EdgeInsets.all(10.0),
-                  child:  TextField(
-                    onChanged: (value) {
-                       _runFilter(value);
-                    },
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(10.0),
+        child: TextField(
+          onChanged: (todoText) {
+            context.read<TodoListProvider>().searchTodoList(todoText);
+          },
 
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Search...',
-                      icon: Icon(Icons.search),
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            hintText: 'Search...',
+            icon: Icon(Icons.search),
 
-                    ),
+          ),
 
-                  ),
-                ),
-              );
+        ),
+      ),
+    );
   }
 
-  void _handleToDoChange(Todo todo){
+  void _handleTodoClick(Todo todo) {
     setState(() {
       todo.isDone = !todo.isDone;
     });
   }
 
-  void _handleDeleteItem(String id){
-    setState(() {
-      todoList.removeWhere((item) => item.id == id);
-    });
-  }
 
-  void _addTodoItem(String todoText){
-  setState(() {
-    todoList.add(Todo(id: DateTime.now().millisecondsSinceEpoch.toString(), isDone: false, todoText: todoText));
-
-  });
-  _todoController.clear();
-
-  }
 }
