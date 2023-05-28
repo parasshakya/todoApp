@@ -49,6 +49,8 @@ class TodoListProvider extends ChangeNotifier {
         .now()
         .millisecondsSinceEpoch
         .toString(), isDone: false, todoText: todoText));
+    _todoFound = _todos;
     notifyListeners();
+
   }
 }

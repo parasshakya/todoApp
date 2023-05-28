@@ -29,12 +29,12 @@ class _CompletedTaskScreenState extends State<CompletedTaskScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(height: 30,),
+                const SizedBox(height: 30,),
                 Expanded(
                   child: ListView(
                     children: [
-                      Text('Completed Todo\'s', style: TextStyle(fontSize: 32),),
-                      SizedBox(height: 20,),
+                      const Text('Completed Todo\'s', style: TextStyle(fontSize: 32),),
+                      const SizedBox(height: 20,),
                       Expanded(child:
                       Consumer<TodoListProvider>(
                         builder: (context, value, _) {

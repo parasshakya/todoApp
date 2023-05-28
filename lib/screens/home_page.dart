@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20), color: Colors.white),
       child: Padding(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         child: TextField(
           onChanged: (todoText) {
             context.read<TodoListProvider>().searchTodoList(todoText);
