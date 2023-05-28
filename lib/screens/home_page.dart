@@ -21,7 +21,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     print('build');
-    final todoListProvider = Provider.of<TodoListProvider>(context);
     return SafeArea(
       child: Scaffold(
         drawer: getDrawer(),
@@ -44,17 +43,19 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: 30,
                   ),
                   Expanded(
-                      child: ListView.builder(
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return TodoItem(
-                          todo: todoListProvider.todoFound.reversed
-                              .toList()[index],
-                          onTodoDelete: todoListProvider.deleteTodoItem,
-                          onTodoClick: _handleTodoClick);
-                    },
-                    itemCount: todoListProvider.todoFound.length,
-                  ))
+                      child: Consumer<TodoListProvider>(
+                        builder: (context, value, child) => ListView.builder(
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return TodoItem(
+                                todo: value.todoFound.reversed
+                                    .toList()[index],
+                                onTodoDelete: value.deleteTodoItem,
+                                onTodoClick: _handleTodoClick);
+                          },
+                          itemCount: value.todoFound.length,
+                        )),
+                      )
                 ],
               ),
             ),
@@ -91,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   margin: const EdgeInsets.only(bottom: 20, right: 20),
                   child: ElevatedButton(
                     onPressed: () {
-                      todoListProvider.addTodoItem(_todoController.text.trim());
+                      context.read<TodoListProvider>().addTodoItem(_todoController.text.trim());
                       _todoController.clear();
                     },
                     style: ElevatedButton.styleFrom(
@@ -102,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       '+',
                       style: TextStyle(fontSize: 40),
                     ),
-                  ),
+                  )
                 )
               ],
             ),
