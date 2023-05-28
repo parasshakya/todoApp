@@ -18,6 +18,7 @@ class CompletedTaskScreen extends StatefulWidget {
 class _CompletedTaskScreenState extends State<CompletedTaskScreen> {
   @override
   Widget build(BuildContext context) {
+    print('completed Task build called');
     return SafeArea(
       child: Scaffold(
         backgroundColor: tdBgColor,
