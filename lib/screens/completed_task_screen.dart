@@ -18,7 +18,6 @@ class CompletedTaskScreen extends StatefulWidget {
 class _CompletedTaskScreenState extends State<CompletedTaskScreen> {
   @override
   Widget build(BuildContext context) {
-    print('completed Task build called');
     return SafeArea(
       child: Scaffold(
         backgroundColor: tdBgColor,
@@ -41,7 +40,8 @@ class _CompletedTaskScreenState extends State<CompletedTaskScreen> {
                           return ListView.builder(
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
-                              return TodoItem(todo: value.completedTodos[index], onTodoDelete: value.deleteTodoItem, onTodoClick: _handleToDoChange);
+                              return TodoItem(todo: value.completedTodos[index], onTodoDelete: value.deleteCompletedTodoItem, onTodoClick: _handleToDoChange,
+                              menuVisible: false,);
 
                             }, itemCount: value.completedTodos.length,);
                         },

@@ -9,13 +9,14 @@ class TodoItem extends StatelessWidget {
   final Todo todo;
   final Function onTodoClick;
   final Function onTodoDelete;
+  final bool menuVisible;
 
-  TodoItem({required this.todo,required this.onTodoDelete, required this.onTodoClick});
+  TodoItem({required this.todo,required this.onTodoDelete, required this.onTodoClick, this.menuVisible = true});
 
 
   @override
   Widget build(BuildContext context) {
-    final todoListProvider = Provider.of<TodoListProvider>(context);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
       child: ListTile(
@@ -47,7 +48,7 @@ class TodoItem extends StatelessWidget {
 
               ),
             ),
-             Padding(
+             if(menuVisible) Padding(
               padding: const EdgeInsets.all(4.0),
               child: SizedBox(
                   height: 35, width: 35,
@@ -58,14 +59,21 @@ class TodoItem extends StatelessWidget {
                   ],
           onSelected: (value){
                       if(value == "completed"){
-                        todoListProvider.addCompletedTodo(todo);
+                        context.read<TodoListProvider>().addCompletedTodo(todo);
                       }
+                      if(value == "in progress"){
+                        context.read<TodoListProvider>().addRunningTodo(todo);
+                      }
+                      if(value == "postpone"){
+                        context.read<TodoListProvider>().addPostponedTodos(todo);
+                      }
+
 
 
           }),
 
     )
-            ),
+            )
           ],
         )
       ),

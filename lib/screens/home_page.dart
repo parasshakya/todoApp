@@ -4,6 +4,8 @@ import 'package:todoapp/constants/colors.dart';
 import 'package:todoapp/model/todo.dart';
 import 'package:todoapp/provider/todo_provider.dart';
 import 'package:todoapp/screens/completed_task_screen.dart';
+import 'package:todoapp/screens/postponed_task_screen.dart';
+import 'package:todoapp/screens/running_task_screen.dart';
 import 'package:todoapp/widget/todo_item.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -168,13 +170,18 @@ class _MyHomePageState extends State<MyHomePage> {
           ListTile(
             title: const Text('Running Tasks'),
             onTap: () {
-              // Handle item 2 tap
-            },
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const RunningTodoScreen()));            },
           ),
           ListTile(
             title: const Text('Postponed Tasks'),
             onTap: () {
-              // Handle item 2 tap
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const PostponedTodoScreen()));
             },
           ),
           // Add more ListTiles for additional items
