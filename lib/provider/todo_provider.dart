@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-
+import 'package:todoapp/boxes.dart';
 import '../model/todo.dart';
 
 class TodoListProvider extends ChangeNotifier {
@@ -19,6 +19,8 @@ class TodoListProvider extends ChangeNotifier {
   List<Todo> get runningTodos => _runningTodos;
 
   List<Todo> get todoFound => _todoFound;
+
+
 
   void searchTodoList(String searchWord){
     List<Todo> results = [];
@@ -79,15 +81,7 @@ class TodoListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addTodoItem(String todoText) {
-    _todos.add(Todo(id: DateTime
-        .now()
-        .millisecondsSinceEpoch
-        .toString(), isDone: false, todoText: todoText));
-    _todoFound = _todos;
-    notifyListeners();
 
-  }
 
   void deleteCompletedTodoItem(String id){
     _completedTodos.removeWhere((element) => element.id == id);

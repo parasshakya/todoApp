@@ -4,6 +4,8 @@ import 'package:todoapp/constants/colors.dart';
 import 'package:todoapp/model/todo.dart';
 import 'package:todoapp/provider/todo_provider.dart';
 
+import '../boxes.dart';
+
 class TodoItem extends StatelessWidget {
   final Todo todo;
   final Function onTodoClick;
@@ -80,34 +82,53 @@ class TodoItem extends StatelessWidget {
                             value: 'completed',
                             child: const Text('completed'),
                             onTap: () {
-                              context
-                                  .read<TodoListProvider>()
-                                  .addCompletedTodo(context, todo);
+                              addTodoItemToCompletedTasks(todo.todoText);
                             },
                           ),
                           PopupMenuItem(
-                            value: 'in progress',
-                            child: const Text('in progress'),
-                            onTap: () {
-                              context
-                                  .read<TodoListProvider>()
-                                  .addRunningTodo(context, todo);
-                            },
-                          ),
+                              value: 'in progress',
+                              child: const Text('in progress'),
+                              onTap: () {
+                                addTodoItemToRunningTasks(todo.todoText);
+                              }),
                           PopupMenuItem(
-                            value: 'postpone',
-                            child: const Text('postpone'),
-                            onTap: () {
-                              context
-                                  .read<TodoListProvider>()
-                                  .addPostponedTodos(context, todo);
-                            },
-                          ),
+                              value: 'postpone',
+                              child: const Text('postpone'),
+                              onTap: () {
+                                addTodoItemToPostponedTasks(todo.todoText);
+                              }),
                         ],
                       ),
                     ))
             ],
           )),
     );
+  }
+
+  void addTodoItemToCompletedTasks(String todoText) {
+    final todo = Todo(
+        isDone: false,
+        todoText: todoText,
+        id: DateTime.now().millisecondsSinceEpoch.toString());
+    final box = Boxes.getCompletedTodos();
+    box.add(todo);
+  }
+
+  void addTodoItemToPostponedTasks(String todoText) {
+    final todo = Todo(
+        isDone: false,
+        todoText: todoText,
+        id: DateTime.now().millisecondsSinceEpoch.toString());
+    final box = Boxes.getPostponedTodos();
+    box.add(todo);
+  }
+
+  void addTodoItemToRunningTasks(String todoText) {
+    final todo = Todo(
+        isDone: false,
+        todoText: todoText,
+        id: DateTime.now().millisecondsSinceEpoch.toString());
+    final box = Boxes.getRunningTodos();
+    box.add(todo);
   }
 }

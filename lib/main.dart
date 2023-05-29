@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
+import 'package:todoapp/model/todo.dart';
 import 'package:todoapp/provider/todo_provider.dart';
 import 'package:todoapp/screens/home_page.dart';
+import 'package:hive/hive.dart';
 
 
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+
+   Hive.registerAdapter(TodoAdapter());
+
+  await Hive.openBox<Todo>("todos");
+  await Hive.openBox<Todo>("completedTodos");
+  await Hive.openBox<Todo>("runningTodos");
+  await Hive.openBox<Todo>("postponedTodos");
 
   runApp(ChangeNotifierProvider(
       create: (_) => TodoListProvider(),

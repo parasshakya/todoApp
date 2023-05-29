@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:todoapp/boxes.dart';
 import 'package:todoapp/constants/colors.dart';
 import 'package:todoapp/model/todo.dart';
 import 'package:todoapp/provider/todo_provider.dart';
@@ -19,7 +22,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final _todoController = TextEditingController();
 
-
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    Hive.close();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,18 +59,17 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: 30,
                   ),
                   Expanded(
-                      child: Consumer<TodoListProvider>(
-                        builder: (context, value, child) => ListView.builder(
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return TodoItem(
-                                todo: value.todoFound.reversed
-                                    .toList()[index],
-                                onTodoDelete: value.deleteTodoItem,
-                                onTodoClick: _handleTodoClick);
-                          },
-                          itemCount: value.todoFound.length,
-                        )),
+                      child: ValueListenableBuilder<Box<Todo>>(
+                        valueListenable: Boxes.getTodos().listenable(),
+                        builder: (context, box, child) {
+                          final todo = box.values.toList().cast<Todo>();
+                          return ListView.builder(
+                              itemBuilder: (context, index) => TodoItem(todo: todo[index], onTodoDelete: (){}, onTodoClick: (){}),
+                          itemCount: todo.length,
+                          );
+                        },
+
+                      )
                       )
                 ],
               ),
@@ -99,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     margin: const EdgeInsets.only(bottom: 20, right: 20),
                     child: ElevatedButton(
                       onPressed: () {
-                        context.read<TodoListProvider>().addTodoItem(_todoController.text.trim());
+                       addTodoItem(_todoController.text.trim());
                         _todoController.clear();
                       },
                       style: ElevatedButton.styleFrom(
@@ -179,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const RunningTodoScreen()));            },
+                      builder: (context) => const RunningTaskScreen()));            },
           ),
           ListTile(
             title: const Text('Postponed Tasks'),
@@ -187,12 +194,19 @@ class _MyHomePageState extends State<MyHomePage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const PostponedTodoScreen()));
+                      builder: (context) => const PostponedTaskScreen()));
             },
           ),
           // Add more ListTiles for additional items
         ],
       ),
     );
+  }
+
+  void addTodoItem(String todoText) {
+    final todo = Todo(isDone: false, todoText: todoText, id: DateTime.now().millisecondsSinceEpoch.toString());
+    final box = Boxes.getTodos();
+    box.add(todo);
+
   }
 }
