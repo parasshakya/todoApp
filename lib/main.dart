@@ -4,7 +4,10 @@ import 'package:todoapp/provider/todo_provider.dart';
 import 'package:todoapp/screens/home_page.dart';
 
 
-void main() {
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(ChangeNotifierProvider(
       create: (_) => TodoListProvider(),
       child: const MyApp()));

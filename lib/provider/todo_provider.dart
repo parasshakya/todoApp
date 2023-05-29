@@ -1,6 +1,5 @@
-
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:provider/provider.dart';
 
 import '../model/todo.dart';
 
@@ -33,21 +32,46 @@ class TodoListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  //
+  // void handleTodoClick(Todo todo){
+  //   todo.isDone = !todo.isDone;
+  //   notifyListeners();
+  //
+  // }
 
 
-  void addCompletedTodo (Todo completedTodo){
+  void addCompletedTodo (BuildContext context, Todo completedTodo){
+    if(_completedTodos.contains(completedTodo)){
+      showSnackbar(context, 'Todo already added to completed tasks');
+      return;
+    }
     _completedTodos.add(completedTodo);
     notifyListeners();
+    showSnackbar(context, 'Todo added to completed tasks');
   }
 
-  void addRunningTodo(Todo runningTodo){
+
+
+
+  void addRunningTodo(BuildContext context ,Todo runningTodo){
+    if(_runningTodos.contains(runningTodo)){
+      showSnackbar(context, "Todo already added to running tasks");
+      return;
+    }
     _runningTodos.add(runningTodo);
     notifyListeners();
+    showSnackbar(context, 'Todo added to running tasks');
+
   }
 
-  void addPostponedTodos(Todo postponedTodo){
+  void addPostponedTodos(BuildContext context , Todo postponedTodo){
+    if(_postponedTodos.contains(postponedTodo)){
+      showSnackbar(context, "Todo already added to postponed tasks");
+      return;
+    }
     _postponedTodos.add(postponedTodo);
     notifyListeners();
+    showSnackbar(context, "Todo added to postponed tasks");
   }
 
   void deleteTodoItem(String id) {
@@ -79,4 +103,14 @@ class TodoListProvider extends ChangeNotifier {
     _runningTodos.removeWhere((element) => element.id == id);
     notifyListeners();
   }
+
+
+
+  void showSnackbar(BuildContext context, String message) {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    scaffoldMessenger..removeCurrentSnackBar()..showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
 }

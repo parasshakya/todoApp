@@ -16,13 +16,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
   final _todoController = TextEditingController();
 
 
 
   @override
   Widget build(BuildContext context) {
-    print('build');
     return SafeArea(
       child: Scaffold(
         drawer: getDrawer(),
@@ -32,9 +32,15 @@ class _MyHomePageState extends State<MyHomePage> {
           backgroundColor: tdBgColor,
           foregroundColor: Colors.black,
         ),
-        body: Stack(children: [
-          Center(
-            child: Padding(
+        body: GestureDetector(
+          onTap: (){
+            FocusScopeNode currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
+            }
+          },
+          child: Stack(children: [
+            Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20),
               child: Column(
@@ -61,56 +67,56 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 20, right: 20, left: 20),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.grey,
-                            offset: Offset(0, 0),
-                            blurRadius: 10.0,
-                            spreadRadius: 0.0,
-                          )
-                        ]),
-                    child: TextField(
-                      controller: _todoController,
-                      decoration: const InputDecoration(
-                        hintText: 'Add a new todo item',
-                        border: InputBorder.none,
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 20, right: 20, left: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(0, 0),
+                              blurRadius: 10.0,
+                              spreadRadius: 0.0,
+                            )
+                          ]),
+                      child: TextField(
+                        controller: _todoController,
+                        decoration: const InputDecoration(
+                          hintText: 'Add a new todo item',
+                          border: InputBorder.none,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 20, right: 20),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      context.read<TodoListProvider>().addTodoItem(_todoController.text.trim());
-                      _todoController.clear();
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: tdBlue,
-                        minimumSize: const Size(60, 60),
-                        elevation: 10),
-                    child: const Text(
-                      '+',
-                      style: TextStyle(fontSize: 40),
-                    ),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 20, right: 20),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.read<TodoListProvider>().addTodoItem(_todoController.text.trim());
+                        _todoController.clear();
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: tdBlue,
+                          minimumSize: const Size(60, 60),
+                          elevation: 10),
+                      child: const Text(
+                        '+',
+                        style: TextStyle(fontSize: 40),
+                      ),
+                    )
                   )
-                )
-              ],
-            ),
-          )
-        ]),
+                ],
+              ),
+            )
+          ]),
+        ),
       ),
     );
   }
